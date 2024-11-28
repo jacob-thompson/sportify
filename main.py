@@ -1,10 +1,13 @@
 import requests
 from simple_term_menu import TerminalMenu
 
-URL = "https://site.api.espn.com/apis/site/v2/sports/"
+PROJECT = "sportify"
+PROJECT_URL = f"https://github.com/jacob-thompson/{PROJECT}"
+API_URL = "https://site.api.espn.com/apis/site/v2/sports/"
 
 ERR = "ERROR:"
-UNEXPECTED = f"{ERR} AN UNEXPECTED ERROR HAS OCCURRED; PLEASE SUBMIT ISSUE REPORT"
+REPORT = f"PLEASE SUBMIT AN ISSUE REPORT:\n\t{PROJECT_URL}/issues"
+UNEXPECTED = f"{ERR} AN UNEXPECTED ERROR HAS OCCURRED\n{REPORT}"
 
 API_OK = 200
 EXIT_OK = 0
@@ -65,6 +68,9 @@ class RetrieveException(Exception):
     def __str__(self):
         return self.msg
 
+def print_info():
+    print(f"{PROJECT} {PROJECT_URL}")
+
 def retrieve_data(league, team):
     try:
         if league == LEAGUES[0]:
@@ -78,22 +84,30 @@ def retrieve_data(league, team):
         else:
             raise RetrieveException(UNEXPECTED)
 
-        response = requests.get(URL + endpoint)
+        response = requests.get(API_URL + endpoint)
 
         if response.status_code == API_OK:
             output = response.json()
             return output
-        else:
+        else: # occurs upon unsuccessful API request
             msg = f"{ERR} API RESPONSE STATUS CODE {response.status_code}"
             raise RetrieveException(msg)
-    except requests.exceptions.RequestException as e:
-        msg = f"{ERR} REQUEST EXCEPTION ENCOUNTERED: {e}"
+    except requests.exceptions.RequestException as e: # unexpected, should never occur
+        msg = f"{UNEXPECTED}\nREQUEST EXCEPTION ENCOUNTERED: {e}"
         raise RetrieveException(msg)
 
 def main():
+    print_info()
+
     menu = TerminalMenu(LEAGUES, title = "LEAGUE")
-    entry = menu.show()
-    league = LEAGUES[entry]
+    entry = None
+    while entry == None:
+        try:
+            entry = menu.show()
+            league = LEAGUES[entry]
+        except TypeError: # occurs when user presses Escape or Q to quit
+            raise SystemExit(EXIT_OK)
+        break
 
     try:
         if league == LEAGUES[0]:
@@ -110,9 +124,14 @@ def main():
         print(e)
         raise SystemExit(EXIT_FAIL)
 
-    submenu = TerminalMenu(teams, title = "TEAM", clear_screen = True)
-    entry = submenu.show()
-    team = teams[entry].split()[1]
+    submenu = TerminalMenu(teams, title = "TEAM")
+    entry = None
+    while entry == None:
+        try:
+            entry = submenu.show()
+            team = teams[entry].split()[1]
+        except TypeError: # occurs when user presses Escape or Q to quit
+            raise SystemExit(EXIT_OK)
 
     try:
         data = retrieve_data(league, team)
