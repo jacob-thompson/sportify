@@ -61,17 +61,10 @@ NHL = [
     "[s] VAN", "[t] VGK", "[u] WSH", "[v] WPG"
 ]
 
-class RetrieveException(Exception):
-    def __init__(self, msg):
-        self.msg = msg
-
-    def __str__(self):
-        return self.msg
-
 def print_info():
     print(f"{PROJECT} {PROJECT_URL}")
 
-def retrieve_data(league, team):
+def request_data(league, team):
     try:
         if league == LEAGUES[0]:
             endpoint = f"football/nfl/teams/{team}"
@@ -81,35 +74,28 @@ def retrieve_data(league, team):
             endpoint = f"baseball/mlb/teams/{team}"
         elif league == LEAGUES[3]:
             endpoint = f"hockey/nhl/teams/{team}"
-        else:
-            raise RetrieveException(UNEXPECTED)
+        else: # impossible
+            print(UNEXPECTED)
+            raise SystemExit(EXIT_FAIL)
 
         response = requests.get(API_URL + endpoint)
 
         if response.status_code == API_OK:
-            output = response.json()
-            return output
+            return response.json()
         else: # occurs upon unsuccessful API request
-            msg = f"{ERR} API RESPONSE STATUS CODE {response.status_code}"
-            raise RetrieveException(msg)
+            raise Exception(f"{ERR} API RESPONSE STATUS CODE {response.status_code}")
     except requests.exceptions.RequestException as e: # unexpected, should never occur
-        msg = f"{UNEXPECTED}\nREQUEST EXCEPTION ENCOUNTERED: {e}"
-        raise RetrieveException(msg)
+        print(f"{UNEXPECTED}\nREQUEST EXCEPTION ENCOUNTERED: {e}")
+        raise SystemExit(EXIT_FAIL)
 
 def main():
     print_info()
 
-    menu = TerminalMenu(LEAGUES, title = "LEAGUE")
-    entry = None
-    while entry == None:
-        try:
-            entry = menu.show()
-            league = LEAGUES[entry]
-        except TypeError: # occurs when user presses Escape or Q to quit
-            raise SystemExit(EXIT_OK)
-        break
+    try: # get input & request output
+        menu = TerminalMenu(LEAGUES, title = "LEAGUE")
+        entry = menu.show()
+        league = LEAGUES[entry]
 
-    try:
         if league == LEAGUES[0]:
             teams = NFL
         elif league == LEAGUES[1]:
@@ -118,25 +104,19 @@ def main():
             teams = MLB
         elif league == LEAGUES[3]:
             teams = NHL
-        else:
-            raise Exception(UNEXPECTED)
-    except Exception as e:
+        else: # impossible
+            print(UNEXPECTED)
+            raise SystemExit(EXIT_FAIL)
+
+        submenu = TerminalMenu(teams, title = "TEAM")
+        entry = submenu.show()
+        team = teams[entry].split()[1]
+
+        data = request_data(league, team)
+    except TypeError: # occurs when user presses Escape or Q to quit
+        raise SystemExit(EXIT_OK)
+    except Exception as e: # occurs upon unsuccessful API request
         print(e)
-        raise SystemExit(EXIT_FAIL)
-
-    submenu = TerminalMenu(teams, title = "TEAM")
-    entry = None
-    while entry == None:
-        try:
-            entry = submenu.show()
-            team = teams[entry].split()[1]
-        except TypeError: # occurs when user presses Escape or Q to quit
-            raise SystemExit(EXIT_OK)
-
-    try:
-        data = retrieve_data(league, team)
-    except RetrieveException as e:
-        print(e.msg)
         raise SystemExit(EXIT_FAIL)
 
     print(data)
