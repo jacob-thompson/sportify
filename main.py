@@ -1,5 +1,5 @@
 import requests
-from simple_term_menu import TerminalMenu
+from simple_term_menu import TerminalMenu as Menu
 
 PROJECT = "sportify"
 PROJECT_URL = f"https://github.com/jacob-thompson/{PROJECT}"
@@ -13,110 +13,106 @@ API_OK = 200
 EXIT_OK = 0
 EXIT_FAIL = 1
 
-LEAGUES = [
-    "[1] NFL", "[2] NBA", "[3] MLB", "[4] NHL"
-]
+SPORTS = {
+    "football": ["NFL"],
+    "basketball": ["NBA"],
+    "baseball": ["MLB"],
+    "hockey": ["NHL"]
+}
 
-NFL = [
-    "[1] ARI", "[2] ATL", "[3] BAL", "[4] BUF",
-    "[5] CAR", "[6] CHI", "[7] CIN", "[8] CLE",
-    "[9] DAL", "[0] DEN", "[a] DET", "[b] GB",
-    "[c] HOU", "[d] IND", "[e] JAX", "[f] KC",
-    "[g] LV", "[h] LAC", "[i] LAR", "[j] MIA",
-    "[k] MIN", "[l] NE", "[m] NO", "[n] NYG",
-    "[o] NYJ", "[p] PHI", "[q] PIT", "[r] SF",
-    "[s] SEA", "[t] TB", "[u] TEN", "[v] WSH"
-]
-
-NBA = [
-    "[1] ATL", "[2] BOS", "[3] BKN", "[4] CHA",
-    "[5] CHI", "[6] CLE", "[7] DAL", "[8] DEN",
-    "[9] DET", "[0] GS", "[a] HOU", "[b] IND",
-    "[c] LAC", "[d] LAL", "[e] MEM", "[f] MIA",
-    "[g] MIL", "[h] MIN", "[i] NO", "[j] NY",
-    "[k] OKC", "[l] ORL", "[m] PHI", "[n] PHX",
-    "[o] POR", "[p] SAC", "[q] SA", "[r] TOR",
-    "[s] UTAH", "[t] WSH"
-]
-
-MLB = [
-    "[1] ARI", "[2] ATL", "[3] BAL", "[4] BOS",
-    "[5] CHW", "[6] CHC", "[7] CIN", "[8] CLE",
-    "[9] COL", "[0] DET", "[a] HOU", "[b] KC",
-    "[c] LAA", "[d] LAD", "[e] MIA", "[f] MIL",
-    "[g] MIN", "[h] NYY", "[i] NYM", "[j] OAK",
-    "[k] PHI", "[l] PIT", "[m] SD", "[n] SF",
-    "[o] SEA", "[p] STL", "[q] TB", "[r] TEX",
-    "[s] TOR", "[t] WSH"
-]
-
-NHL = [
-    "[1] ANA", "[2] BOS", "[3] BUF", "[4] CGY",
-    "[5] CAR", "[6] CHI", "[7] COL", "[8] CBJ",
-    "[9] DAL", "[0] DET", "[a] EDM", "[b] FLA",
-    "[c] LA", "[d] MIN", "[e] MTL", "[f] NSH",
-    "[g] NJ", "[h] NYI", "[i] NYR", "[j] OTT",
-    "[k] PHI", "[l] PIT", "[m] SJ", "[n] SEA",
-    "[o] STL", "[p] TB", "[q] TOR", "[r] UTAH",
-    "[s] VAN", "[t] VGK", "[u] WSH", "[v] WPG"
-]
-
-def print_info():
-    print(f"{PROJECT} {PROJECT_URL}")
+MENU_DATA = {
+    "[1] NFL": [
+        "[1] ARI", "[2] ATL", "[3] BAL", "[4] BUF",
+        "[5] CAR", "[6] CHI", "[7] CIN", "[8] CLE",
+        "[9] DAL", "[0] DEN", "[a] DET", "[b] GB",
+        "[c] HOU", "[d] IND", "[e] JAX", "[f] KC",
+        "[g] LV", "[h] LAC", "[i] LAR", "[j] MIA",
+        "[k] MIN", "[l] NE", "[m] NO", "[n] NYG",
+        "[o] NYJ", "[p] PHI", "[q] PIT", "[r] SF",
+        "[s] SEA", "[t] TB", "[u] TEN", "[v] WSH"
+    ],
+    "[2] NBA": [
+        "[1] ATL", "[2] BOS", "[3] BKN", "[4] CHA",
+        "[5] CHI", "[6] CLE", "[7] DAL", "[8] DEN",
+        "[9] DET", "[0] GS", "[a] HOU", "[b] IND",
+        "[c] LAC", "[d] LAL", "[e] MEM", "[f] MIA",
+        "[g] MIL", "[h] MIN", "[i] NO", "[j] NY",
+        "[k] OKC", "[l] ORL", "[m] PHI", "[n] PHX",
+        "[o] POR", "[p] SAC", "[q] SA", "[r] TOR",
+        "[s] UTAH", "[t] WSH"
+    ],
+    "[3] MLB": [
+        "[1] ARI", "[2] ATL", "[3] BAL", "[4] BOS",
+        "[5] CHW", "[6] CHC", "[7] CIN", "[8] CLE",
+        "[9] COL", "[0] DET", "[a] HOU", "[b] KC",
+        "[c] LAA", "[d] LAD", "[e] MIA", "[f] MIL",
+        "[g] MIN", "[h] NYY", "[i] NYM", "[j] OAK",
+        "[k] PHI", "[l] PIT", "[m] SD", "[n] SF",
+        "[o] SEA", "[p] STL", "[q] TB", "[r] TEX",
+        "[s] TOR", "[t] WSH"
+    ],
+    "[4] NHL": [
+        "[1] ANA", "[2] BOS", "[3] BUF", "[4] CGY",
+        "[5] CAR", "[6] CHI", "[7] COL", "[8] CBJ",
+        "[9] DAL", "[0] DET", "[a] EDM", "[b] FLA",
+        "[c] LA", "[d] MIN", "[e] MTL", "[f] NSH",
+        "[g] NJ", "[h] NYI", "[i] NYR", "[j] OTT",
+        "[k] PHI", "[l] PIT", "[m] SJ", "[n] SEA",
+        "[o] STL", "[p] TB", "[q] TOR", "[r] UTAH",
+        "[s] VAN", "[t] VGK", "[u] WSH", "[v] WPG"
+    ]
+}
 
 def request_data(league, team):
     try:
-        if league == LEAGUES[0]:
-            endpoint = f"football/nfl/teams/{team}"
-        elif league == LEAGUES[1]:
-            endpoint = f"basketball/nba/teams/{team}"
-        elif league == LEAGUES[2]:
-            endpoint = f"baseball/mlb/teams/{team}"
-        elif league == LEAGUES[3]:
-            endpoint = f"hockey/nhl/teams/{team}"
-        else: # impossible
-            print(UNEXPECTED)
-            raise SystemExit(EXIT_FAIL)
+        for listed_sport, associations in SPORTS.items():
+            if league in associations:
+                sport = listed_sport
+                break
 
-        response = requests.get(API_URL + endpoint)
+        assert sport is not None
+
+        endpoint = f"{sport}/{league}/teams/{team}/"
+        response = requests.get(API_URL + endpoint.lower())
 
         if response.status_code == API_OK:
             return response.json()
         else: # occurs upon unsuccessful API request
             raise Exception(f"{ERR} API RESPONSE STATUS CODE {response.status_code}")
-    except requests.exceptions.RequestException as e: # unexpected, should never occur
+    except requests.exceptions.RequestException as e:
+        # treat this case as unexpected since RequestException is "ambiguous"
+        # https://requests.readthedocs.io/en/latest/api/#requests.RequestException
         print(f"{UNEXPECTED}\nREQUEST EXCEPTION ENCOUNTERED: {e}")
         raise SystemExit(EXIT_FAIL)
 
 def main():
-    print_info()
+    print(f"{PROJECT} {PROJECT_URL}")
 
+    leagues = list(MENU_DATA.keys())
     try: # get input & request output
-        menu = TerminalMenu(LEAGUES, title = "LEAGUE")
+        menu = Menu(leagues, title = "LEAGUE")
         entry = menu.show()
-        league = LEAGUES[entry]
+        selected_league = leagues[entry]
 
-        if league == LEAGUES[0]:
-            teams = NFL
-        elif league == LEAGUES[1]:
-            teams = NBA
-        elif league == LEAGUES[2]:
-            teams = MLB
-        elif league == LEAGUES[3]:
-            teams = NHL
-        else: # impossible
-            print(UNEXPECTED)
-            raise SystemExit(EXIT_FAIL)
+        for league in leagues:
+            if league == selected_league:
+                teams = MENU_DATA[league]
+                break
 
-        submenu = TerminalMenu(teams, title = "TEAM")
+        assert teams is not None
+
+        submenu = Menu(teams, title = "TEAM")
         entry = submenu.show()
-        team = teams[entry].split()[1]
+        selected_team = teams[entry]
 
-        data = request_data(league, team)
+        data = request_data(selected_league.split()[1], selected_team.split()[1])
     except TypeError: # occurs when user presses Escape or Q to quit
         raise SystemExit(EXIT_OK)
     except Exception as e: # occurs upon unsuccessful API request
         print(e)
+        raise SystemExit(EXIT_FAIL)
+    except AssertionError: # impossible
+        print(UNEXPECTED)
         raise SystemExit(EXIT_FAIL)
 
     print(data)
