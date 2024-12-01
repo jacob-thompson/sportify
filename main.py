@@ -1,3 +1,7 @@
+from datetime import datetime
+import json
+
+from dateutil import tz
 import requests
 from simple_term_menu import TerminalMenu as Menu
 
@@ -63,6 +67,50 @@ MENU_DATA = {
     ]
 }
 
+class BadAPIRequest(Exception):
+    pass
+
+def convert(time):
+    parsed = datetime.strptime(time, "%Y-%m-%dT%H:%MZ")
+    utc = parsed.replace(tzinfo=tz.tzutc()) # represent time in UTC
+    local = utc.astimezone(tz.tzlocal()) # convert time to local
+
+    local_date = f"{local.date().year}-{local.date().month:02}-{local.date().day:02}"
+    local_time = f"{local.time().hour:02}:{local.time().minute:02}"
+    local_datetime = f"{local_date} {local_time}"
+
+    return local_datetime
+
+def output(data):
+    name = data["team"]["displayName"]
+    print(name)
+
+    try:
+        # be cautious here since a team's record field may be empty during offseason
+        record = data["team"]["record"]["items"][0]["summary"]
+        print(record) # TODO: expand
+    except KeyError:
+        pass
+
+    link = data["team"]["links"][0]["href"]
+    print(link) # TODO: expand
+
+    venue = data["team"]["franchise"]["venue"]["fullName"]
+    address = data["team"]["franchise"]["venue"]["address"]
+    location = f"{venue}"
+    for entity in address.values():
+        location += f", {entity}"
+    print(location)
+
+    next_event = data["team"]["nextEvent"][0]
+    event_name = next_event["shortName"]
+    event_time = convert(next_event["date"])
+    event_msg = f"{event_name} {event_time}"
+    print(event_msg)
+
+    standing = data["team"]["standingSummary"]
+    print(standing)
+
 def request_data(league, team):
     try:
         for listed_sport, associations in SPORTS.items():
@@ -77,8 +125,8 @@ def request_data(league, team):
 
         if response.status_code == API_OK:
             return response.json()
-        else: # occurs upon unsuccessful API request
-            raise Exception(f"{ERR} API RESPONSE STATUS CODE {response.status_code}")
+        else:
+            raise BadAPIRequest(f"{ERR} API RESPONSE STATUS CODE {response.status_code}")
     except requests.exceptions.RequestException as e:
         # treat this case as unexpected since RequestException is "ambiguous"
         # https://requests.readthedocs.io/en/latest/api/#requests.RequestException
@@ -101,21 +149,21 @@ def main():
 
         assert teams is not None
 
-        submenu = Menu(teams, title = "TEAM")
+        submenu = Menu(teams, title = "TEAM", clear_screen = True)
         entry = submenu.show()
         selected_team = teams[entry]
 
         data = request_data(selected_league.split()[1], selected_team.split()[1])
+    except BadAPIRequest as error:
+        print(error)
+        raise SystemExit(EXIT_FAIL)
     except TypeError: # occurs when user presses Escape or Q to quit
         raise SystemExit(EXIT_OK)
-    except Exception as e: # occurs upon unsuccessful API request
-        print(e)
-        raise SystemExit(EXIT_FAIL)
     except AssertionError: # impossible
         print(UNEXPECTED)
         raise SystemExit(EXIT_FAIL)
 
-    print(data)
+    output(data)
     raise SystemExit(EXIT_OK)
 
 if __name__ == "__main__":
