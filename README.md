@@ -30,6 +30,9 @@ pip install sportify
 
 > [!IMPORTANT]
 > Requires `build`
+> ```
+> pip install build
+> ```
 
 1. Clone the repository:
     ```bash
@@ -43,11 +46,9 @@ pip install sportify
     ```
 
 3. Install the application:
-    Recommended:
     ```bash
     pipx install dist/*.tar.gz
     ```
-    Otherwise:
     ```bash
     pip install dist/*.tar.gz
     ```
