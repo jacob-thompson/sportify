@@ -38,8 +38,8 @@ pip install sportify
     ```bash
     python3 -m build
     ```
-    > [!IMPORTANT]
-    > Requires `build`
+> [!IMPORTANT]
+> Requires `build`
 
 3. Install the application:
     Recommended:
