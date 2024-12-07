@@ -18,10 +18,18 @@ EXIT_OK = 0
 EXIT_FAIL = 1
 
 SPORTS = {
-    "football": ["NFL"],
-    "basketball": ["NBA"],
-    "baseball": ["MLB"],
-    "hockey": ["NHL"]
+    "football": {
+        "NFL"
+    },
+    "basketball": {
+        "NBA"
+    },
+    "baseball": {
+        "MLB"
+    },
+    "hockey": {
+        "NHL"
+    }
 }
 
 MENU_DATA = {
@@ -115,14 +123,10 @@ def output(data):
 
 def request_data(league, team):
     try:
-        for listed_sport, associations in SPORTS.items():
-            if league in associations:
-                sport = listed_sport
-                break
+        sport = [listed for listed, associations in SPORTS.items() if league in associations]
+        assert sport != []
 
-        assert sport is not None
-
-        endpoint = f"{sport}/{league}/teams/{team}/"
+        endpoint = f"{sport[0]}/{league}/teams/{team}/"
         response = requests.get(API_URL + endpoint.lower())
 
         if response.status_code == API_OK:
@@ -144,16 +148,12 @@ def main():
         entry = menu.show()
         selected_league = leagues[entry]
 
-        for league in leagues:
-            if league == selected_league:
-                teams = MENU_DATA[league]
-                break
+        teams = [MENU_DATA[league] for league in leagues if league == selected_league]
+        assert teams != []
 
-        assert teams is not None
-
-        submenu = Menu(teams, title = "TEAM", clear_screen = True)
+        submenu = Menu(teams[0], title = "TEAM", clear_screen = True)
         entry = submenu.show()
-        selected_team = teams[entry]
+        selected_team = teams[0][entry]
 
         data = request_data(selected_league.split()[1], selected_team.split()[1])
     except BadAPIRequest as error:
