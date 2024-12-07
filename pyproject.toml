@@ -36,7 +36,7 @@ dependencies = ["python-dateutil", "requests", "simple_term_menu"]
 "Homepage" = "https://github.com/jacob-thompson/sportify"
 "Bug Reports" = "https://github.com/jacob-thompson/sportify/issues"
 
-[project.gui-scripts]
+[project.scripts]
 sportify = "sportify.main:main"
 
 [tool.hatch.version]
