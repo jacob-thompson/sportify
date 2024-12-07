@@ -38,14 +38,10 @@ def output(data):
     except KeyError:
         print()
 
-    """
     venue = data["team"]["franchise"]["venue"]["fullName"]
     address = data["team"]["franchise"]["venue"]["address"]
-    location = f"{venue}"
-    for entity in address.values():
-        location += f", {entity}"
-    print(location)
-    """
+    location = "".join(f", {entity}" for entity in address.values())
+    print(f"{venue}{location}")
 
     next_event = data["team"]["nextEvent"][0]
     event_name = next_event["name"]
