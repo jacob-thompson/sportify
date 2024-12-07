@@ -52,7 +52,7 @@ def output(data):
 def request_data(league, team):
     try:
         sport = [listed for listed, associations in SPORTS.items() if league in associations]
-        assert sport != []
+        assert sport != [], "INVALID SPORT"
 
         endpoint = f"{sport[0]}/{league}/teams/{team}/"
         response = requests.get(API_URL + endpoint.lower())
@@ -60,7 +60,7 @@ def request_data(league, team):
         if response.status_code == API_OK:
             return response.json()
         else:
-            raise BadAPIRequest(f"{ERR} API RESPONSE STATUS CODE {response.status_code}")
+            raise BadAPIRequest(f"ERROR: API RESPONSE STATUS CODE {response.status_code}")
     except requests.exceptions.RequestException as error:
         # treat this case as unexpected since RequestException is "ambiguous"
         # https://requests.readthedocs.io/en/latest/api/#requests.RequestException

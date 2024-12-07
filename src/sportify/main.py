@@ -10,7 +10,7 @@ def main():
         selected_league = leagues[entry]
 
         teams = [MENU_DATA[league] for league in leagues if league == selected_league]
-        assert teams != []
+        assert teams != [], "INVALID TEAM"
 
         submenu = Menu(teams[0], title = "TEAM", clear_screen = True)
         entry = submenu.show()
@@ -22,8 +22,9 @@ def main():
         raise SystemExit(EXIT_FAIL)
     except TypeError: # occurs when user presses Escape or Q to quit
         raise SystemExit(EXIT_OK)
-    except AssertionError: # impossible
-        print(UNEXPECTED)
+    except AssertionError as error: # impossible
+        print(f"{UNEXPECTED}: {error}")
+        print(REPORT)
         raise SystemExit(EXIT_FAIL)
 
     output(data)
