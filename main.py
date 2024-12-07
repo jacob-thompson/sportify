@@ -82,34 +82,36 @@ def convert(time):
     return local_datetime
 
 def output(data):
+    link = data["team"]["links"][0]["href"]
+    print(link) # TODO: expand
+
     name = data["team"]["displayName"]
-    print(name)
+    print(name, end = " - ")
+
+    standing = data["team"]["standingSummary"]
+    print(standing, end = " ")
 
     try:
         # be cautious here since a team's record field may be empty during offseason
         record = data["team"]["record"]["items"][0]["summary"]
-        print(record) # TODO: expand
+        print(f"({record})") # TODO: expand
     except KeyError:
-        pass
+        print()
 
-    link = data["team"]["links"][0]["href"]
-    print(link) # TODO: expand
-
+    """
     venue = data["team"]["franchise"]["venue"]["fullName"]
     address = data["team"]["franchise"]["venue"]["address"]
     location = f"{venue}"
     for entity in address.values():
         location += f", {entity}"
     print(location)
+    """
 
     next_event = data["team"]["nextEvent"][0]
-    event_name = next_event["shortName"]
+    event_name = next_event["name"]
     event_time = convert(next_event["date"])
     event_msg = f"{event_name} {event_time}"
     print(event_msg)
-
-    standing = data["team"]["standingSummary"]
-    print(standing)
 
 def request_data(league, team):
     try:
@@ -127,10 +129,10 @@ def request_data(league, team):
             return response.json()
         else:
             raise BadAPIRequest(f"{ERR} API RESPONSE STATUS CODE {response.status_code}")
-    except requests.exceptions.RequestException as e:
+    except requests.exceptions.RequestException as error:
         # treat this case as unexpected since RequestException is "ambiguous"
         # https://requests.readthedocs.io/en/latest/api/#requests.RequestException
-        print(f"{UNEXPECTED}\nREQUEST EXCEPTION ENCOUNTERED: {e}")
+        print(f"{UNEXPECTED}\nREQUEST EXCEPTION ENCOUNTERED: {error}")
         raise SystemExit(EXIT_FAIL)
 
 def main():
