@@ -28,6 +28,9 @@ pip install sportify
 
 ### Source
 
+> [!IMPORTANT]
+> Requires `build`
+
 1. Clone the repository:
     ```bash
     git clone https://github.com/your-username/sportify.git
@@ -38,8 +41,6 @@ pip install sportify
     ```bash
     python3 -m build
     ```
-> [!IMPORTANT]
-> Requires `build`
 
 3. Install the application:
     Recommended:
