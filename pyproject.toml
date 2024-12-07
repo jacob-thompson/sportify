@@ -1,0 +1,46 @@
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[project]
+dynamic = ["version"]
+name = "sportify"
+description = "Fetch sports data from CLI"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {file = "LICENSE"}
+keywords = ["sports", "athletics", "data", "executable", "application", "cli", "espn"]
+authors = [
+    {name = "Jacob A. Thompson", email = "jacobalthompson@gmail.com"}
+]
+maintainers = [
+    {name = "Jacob A. Thompson", email = "jacobalthompson@gmail.com"}
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Topic :: Games/Entertainment",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3 :: Only",
+]
+dependencies = ["python-dateutil", "requests", "simple_term_menu"]
+
+[project.urls]
+"Homepage" = "https://github.com/jacob-thompson/sportify"
+"Bug Reports" = "https://github.com/jacob-thompson/sportify/issues"
+
+[project.gui-scripts]
+sportify = "sportify.main:main"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "_version.py"
