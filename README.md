@@ -53,11 +53,6 @@ pip install sportify
     pip install dist/*.tar.gz
     ```
 
-4. Run the application:
-    ```bash
-    sportify
-    ```
-
 ## Usage
 
 ```bash
