@@ -16,17 +16,19 @@ To install Sportify, ensure you have Python 3.7 or higher installed on your mach
 
 ### Pip
 
-Recommended:
+[Recommended](https://peps.python.org/pep-0668/):
+
 ```bash
 pipx install sportify
 ```
 
 Otherwise:
+
 ```bash
 pip install sportify
 ```
 
-### Source
+### From Source
 
 > [!IMPORTANT]
 > Requires `build`
@@ -35,22 +37,28 @@ pip install sportify
 > ```
 
 1. Clone the repository:
+
     ```bash
     git clone https://github.com/jacob-thompson/sportify.git
     cd sportify
     ```
 
 2. Build the application:
+
     ```bash
     python3 -m build
     ```
 
 3. Install the application:
+
+    `pipx`:
     ```bash
-    pipx install dist/*.tar.gz
+    pipx install dist/*.tar.gz --force
     ```
+
+    `pip`:
     ```bash
-    pip install dist/*.tar.gz
+    pip install dist/*.tar.gz --force
     ```
 
 ## Usage
