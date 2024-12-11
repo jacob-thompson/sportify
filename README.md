@@ -1,8 +1,8 @@
 # Sportify
 
-Sportify is a Python-based command-line interface (CLI) application that fetches and displays real-time sports data. Whether you're interested in scores, team stats, player information, or upcoming fixtures, Sportify provides a convenient way to access the latest sports updates from your terminal.
+Sportify is an application for the command line interface (CLI) that fetches and displays real-time sports data. Whether you're interested in scores, team stats, player information, or upcoming fixtures, Sportify provides a convenient way to access the latest sports updates from your terminal.
 
-## Features (Work-in-progress)
+## 🚀 Features (Work-in-progress)
 
 - Fetch live scores for various sports.
 - Get detailed stats on teams and players.
@@ -10,7 +10,7 @@ Sportify is a Python-based command-line interface (CLI) application that fetches
 - Filter data by league, team, or player.
 - User-friendly CLI commands with customizable options.
 
-## Installation
+## 📦 Installation
 
 To install Sportify, ensure you have Python 3.7 or higher installed on your machine.
 
@@ -61,7 +61,7 @@ pip install sportify
     pip install dist/*.tar.gz --force
     ```
 
-## Usage
+## 🛠️ Usage
 
 ```bash
 sportify
