@@ -36,7 +36,7 @@ pip install sportify
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/your-username/sportify.git
+    git clone https://github.com/jacob-thompson/sportify.git
     cd sportify
     ```
 
