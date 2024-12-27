@@ -1,8 +1,6 @@
 PROJECT = "sportify"
-PROJECT_URL = f"https://github.com/jacob-thompson/{PROJECT}"
 API_URL = "https://site.api.espn.com/apis/site/v2/sports/"
 
-REPORT = f"PLEASE SUBMIT AN ISSUE REPORT:\n\t{PROJECT_URL}/issues"
 UNEXPECTED = "AN UNEXPECTED ERROR HAS OCCURRED"
 
 SPORTS = {
